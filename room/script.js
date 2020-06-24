@@ -139,11 +139,15 @@ const Peer = window.Peer;
       //localText.value = '';
     }
     function onClickMute() {
-      localStream.getAudioTracks().forEach(track => track.enabled = false);
+      //localStream.getAudioTracks().forEach(track => track.enabled = false);
+      //console.log(localStream.getAudioTracks());
+      room.replaceStream(none);
       console.log(localStream.getAudioTracks());
     }
     function onClickunMute() {
-      localStream.getAudioTracks().forEach(track => track.enabled = true);
+      //localStream.getAudioTracks().forEach(track => track.enabled = true);
+      //console.log(localStream.getAudioTracks());
+      room.replaceStream(localStream);
       console.log(localStream.getAudioTracks());
     }
 
