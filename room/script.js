@@ -69,7 +69,7 @@ const Peer = window.Peer;
       mode: getRoomModeByHash(),
       //mode: 'mesh',
       stream: localStream,
-      videoCodec: H264,
+      videoCodec: 'H264',
     });
 
     room.on('log', log => {
