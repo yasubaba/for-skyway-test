@@ -47,28 +47,32 @@ const Peer = window.Peer;
     key: window.__SKYWAY_KEY__,
     debug: 3,
   }));
+  console.log('peer.open(1):'+peer.open);
 
-
+  peer.on('open', id => {
+    console.log('peerId: '+id+'/peer.on: '+peer.open);
+  });
 
   // Register join handler
   joinTrigger.addEventListener('click', () => {
   //peer.on('open', () => {
     // Note that you need to ensure the peer has connected to signaling server
     // before using methods of peer instance.
-    console.log(peer.open);
+    console.log('peer.open(2):'+peer.open);
     if (!peer.open) {
       return;
     }
-    console.log('Success onload');
+    console.log('peer.open(3):'+peer.open);
 
     const room = peer.joinRoom(roomId.value, {
     //const room = peer.joinRoom('testroom', {
       mode: getRoomModeByHash(),
       //mode: 'mesh',
       stream: localStream,
+      videoCodec: H264;
     });
 
-    room.once('log', log => {
+    room.on('log', log => {
       console.log('getLog:'+log);
     })
 
@@ -77,6 +81,7 @@ const Peer = window.Peer;
     });
     room.on('peerJoin', peerId => {
       messages.textContent += `=== ${peerId} joined ===\n`;
+      consolo.log('room.on peerJoin');
       room.getLog();
     });
 
@@ -89,12 +94,14 @@ const Peer = window.Peer;
       newVideo.setAttribute('data-peer-id', stream.peerId);
       remoteVideos.append(newVideo);
       await newVideo.play().catch(console.error);
+      console.log('room.on stream');
       room.getLog();
     });
 
     room.on('data', ({ data, src }) => {
       // Show a message sent to the room and who sent
       messages.textContent += `${src}: ${data}\n`;
+      console.log('room.on data');
       room.getLog();
     });
 
@@ -108,6 +115,7 @@ const Peer = window.Peer;
       remoteVideo.remove();
 
       messages.textContent += `=== ${peerId} left ===\n`;
+      console.log('room.on peerLeave');
       room.getLog();
     });
 
@@ -120,6 +128,7 @@ const Peer = window.Peer;
         remoteVideo.srcObject = null;
         remoteVideo.remove();
       });
+      console.log('room.once close');
       room.getLog();
     });
 
@@ -141,7 +150,7 @@ const Peer = window.Peer;
     function onClickMute() {
       //localStream.getAudioTracks().forEach(track => track.enabled = false);
       //console.log(localStream.getAudioTracks());
-      room.replaceStream(none);
+      room.replaceStream(null);
       console.log(localStream.getAudioTracks());
     }
     function onClickunMute() {
