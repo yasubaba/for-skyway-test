@@ -42,6 +42,7 @@ const Peer = window.Peer;
   localVideo.playsInline = true;
   await localVideo.play().catch(console.error);
 
+console.log(window.__SKYWAY_KEY__);
   // eslint-disable-next-line require-atomic-updates
   const peer = (window.peer = new Peer({
     key: window.__SKYWAY_KEY__,
@@ -69,11 +70,12 @@ const Peer = window.Peer;
       mode: getRoomModeByHash(),
       //mode: 'mesh',
       stream: localStream,
-      videoCodec: 'H264',
+      //videoCodec: 'H264',
     });
 
     room.on('log', log => {
       console.log('getLog:'+log);
+      console.log('getStats():'+room.getPeerConnection().getStats());
     })
 
     room.once('open', () => {
@@ -138,30 +140,37 @@ const Peer = window.Peer;
     leaveTrigger.addEventListener('click', () => room.close(), { once: true });
 
     function onClickSend() {
-      console.log(localStream.getAudioTracks().forEach(track => track.enabled));
-      localStream.getAudioTracks().forEach(track => track.enabled = true);
-      console.log(localStream.getAudioTracks());
       // Send message to all of the peers in the room via websocket
-      //room.send(localText.value);
+      room.send(localText.value);
 
-      //messages.textContent += `${peer.id}: ${localText.value}\n`;
-      //localText.value = '';
+      messages.textContent += `${peer.id}: ${localText.value}\n`;
+      localText.value = '';
     }
     function onClickMute() {
-      //localStream.getAudioTracks().forEach(track => track.enabled = false);
-      //console.log(localStream.getAudioTracks());
-      room.replaceStream(null);
+      localStream.getAudioTracks().forEach(track => track.enabled = false);
       console.log(localStream.getAudioTracks());
+      //room.replaceStream(null);
+      //console.log(localStream.getAudioTracks());
     }
     function onClickunMute() {
-      //localStream.getAudioTracks().forEach(track => track.enabled = true);
-      //console.log(localStream.getAudioTracks());
-      room.replaceStream(localStream);
+      localStream.getAudioTracks().forEach(track => track.enabled = true);
       console.log(localStream.getAudioTracks());
+      //room.replaceStream(localStream);
+      //console.log(localStream.getAudioTracks());
     }
 
 
   });
+
+  function getParam(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
 
   peer.on('error', console.error);
 })();
