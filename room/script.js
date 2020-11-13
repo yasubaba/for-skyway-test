@@ -81,6 +81,7 @@ console.log(window.__SKYWAY_KEY__);
       mode: getRoomModeByHash(),
       //mode: 'mesh',
       stream: localStream,
+      audioReceiveEnabled: true,
       //videoCodec: 'H264',
     });
 
