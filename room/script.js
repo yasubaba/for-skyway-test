@@ -32,7 +32,15 @@ const Peer = window.Peer;
   const localStream = await navigator.mediaDevices
     .getUserMedia({
       audio: true,
-      video: true,
+      video: false,
+      audio:{
+        channelCount:{"ideal":2,"min":1},
+        "sampleRate":{"ideal":48000},
+        "echoCancellation":true,
+        "autoGainControl":true,
+        "noiseSuppression":true,
+        "googAudioMirroring":false,
+      }
     })
     .catch(console.error);
 
@@ -47,6 +55,9 @@ console.log(window.__SKYWAY_KEY__);
   const peer = (window.peer = new Peer({
     key: window.__SKYWAY_KEY__,
     debug: 3,
+    config: {
+      turn: false,
+    },
   }));
   console.log('peer.open(1):'+peer.open);
 
@@ -75,7 +86,6 @@ console.log(window.__SKYWAY_KEY__);
 
     room.on('log', log => {
       console.log('getLog:'+log);
-      console.log('getStats():'+room.getPeerConnection().getStats());
     })
 
     room.once('open', () => {
@@ -83,7 +93,6 @@ console.log(window.__SKYWAY_KEY__);
     });
     room.on('peerJoin', peerId => {
       messages.textContent += `=== ${peerId} joined ===\n`;
-      consolo.log('room.on peerJoin');
       room.getLog();
     });
 
